@@ -50,6 +50,9 @@ describe ParsletCSS::Parser do
     it "float size" do
       @parser.parse(".date_selector .nav { width: 17.5em; }")
     end
+    it 'property priority' do
+      @parser.parse(".date_selector .nav { width: 17.5em !important; }")
+    end
   end
 
   describe "parse fail" do

@@ -18,7 +18,7 @@ class ParsletCSS::Parser < Parslet::Parser
   rule(:property_value_keywords) {
     str('no-repeat') | str('scroll') | str('inherit') |
     str('baseline') | str('block') | str('both') | str('bold') |
-    str('inline-block') | str('inline')
+    str('inline-block') | str('!important') | str('inline')
   }
 
   # URL
