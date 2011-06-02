@@ -1,5 +1,5 @@
 class ParsletCSS::Parser < Parslet::Parser
-  # TODO: be mo precise with selectors
+  # TODO: be more precise with selectors
   rule(:selectors) { ignore >> match('[^{]').repeat }
   rule(:lcurly) { ignore >> str('{') >> ignore }
   rule(:declarations) { (declaration >> semicolon?).repeat }
@@ -82,6 +82,8 @@ class ParsletCSS::Parser < Parslet::Parser
   }
   rule(:rgb_value) { percent | float | integer }
 
+  # TODO: http://www.w3.org/TR/css3-2d-transforms/
+
   rule(:rcurly) { ignore >> str('}') >> ignore }
 
   rule(:space) { match('\s').repeat(1) }
@@ -98,6 +100,7 @@ class ParsletCSS::Parser < Parslet::Parser
   rule(:comment) { space? >> (str('/*') >> (str('*/').absent? >> any).repeat >> str('*/')) >> space? }
   rule(:ignore) { comment | space? }
 
+  # TODO: import charset media
   rule(:ruleset) { selectors >> lcurly >> declarations >> rcurly }
   rule(:stylesheet) { ruleset.repeat }
   root :stylesheet
