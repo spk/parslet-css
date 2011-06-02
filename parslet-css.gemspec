@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.date = Time.now.utc.strftime("%Y-%m-%d")
   s.homepage = "http://github.com/spk/parslet-css"
   s.authors = "Laurent Arnoud"
-  s.email = "laurent.arnoud@spkdev.net"
+  s.email = "laurent@spkdev.net"
   s.description = "CSS parser with Parslet"
   s.summary = "CSS parser with Parslet grammar tool"
   s.extra_rdoc_files = %w(README.markdown)
