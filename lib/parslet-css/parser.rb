@@ -101,6 +101,20 @@ class ParsletCSS::Parser < Parslet::Parser
   rule(:comment) { space? >> (str('/*') >> (str('*/').absent? >> any).repeat >> str('*/')) >> space? }
   rule(:ignore) { comment | space? }
 
+  # @charset
+  # http://www.w3.org/TR/CSS21/syndata.html#charset
+  # http://www.iana.org/assignments/character-sets
+  @@charsets_file = File.join(File.dirname(__FILE__), '..', '..', 'data', 'iana_character_sets.txt')
+  @@charsets = open(@@charsets_file).read.split
+  def charsets
+    Parslet::Atoms::Alternative.new(*@@charsets.map {|c| str(c)})
+  end
+  rule(:charset) {
+    str('@charset') >> space >> quote >>
+    charsets >>
+    quote >> semicolon >> ignore
+  }
+
   # @import
   # http://www.w3.org/TR/CSS2/cascade.html#at-import
   # http://www.w3.org/TR/CSS2/syndata.html#at-rules
@@ -117,8 +131,8 @@ class ParsletCSS::Parser < Parslet::Parser
     str('tty') | str('tv')
   }
   rule(:ruleset) { selectors >> lcurly >> declarations >> rcurly }
-  # TODO: charset media
+  # TODO: media
   # http://www.w3.org/TR/CSS2/media.html#media-intro
-  rule(:stylesheet) { import.repeat.maybe >> ruleset.repeat }
+  rule(:stylesheet) { charset.maybe >> import.repeat.maybe >> ruleset.repeat }
   root :stylesheet
 end

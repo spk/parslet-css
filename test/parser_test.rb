@@ -15,6 +15,13 @@ describe ParsletCSS::Parser do
     end
   end
 
+  describe "charset" do
+    it '@charset rule must place the rule at the very beginning of the style sheet' do
+      @parser.parse('@charset "ISO-8859-1";')
+      @parser.parse('@charset "UTF-8"; @import "mystyle.css"; body {}')
+    end
+  end
+
   describe "parse success" do
     it "parse with percent" do
       @parser.parse("body { height: 100%; width: 100%; }")
@@ -80,7 +87,10 @@ describe ParsletCSS::Parser do
 
       # http://www.w3.org/TR/CSS2/syndata.html#at-rules
       {:msg => "must ignore any '@import' rule that occurs inside a block",
-        :css => '@import "subs.css"; h1 { color: blue } @import "list.css";'}
+        :css => '@import "subs.css"; h1 { color: blue } @import "list.css";'},
+      {:msg => 'non valid charset', :css => '@charset "none";'},
+      {:msg => '@charset rule not at the beginning of the style sheet',
+        :css => '@import "awesome.css"; @charset "UTF-8";'},
     ]
     @raises.each do |r|
       class_eval do
