@@ -51,7 +51,7 @@ class ParsletCSS::Parser < Parslet::Parser
 
   # http://www.w3.org/TR/2002/WD-css3-fonts-20020802/#font-family-prop
   rule(:font_family_list) {
-    font_family >> ((str(',') >> space? >> font_family).repeat).maybe
+    font_family >> ((comma >> space? >> font_family).repeat).maybe
   }
   # Font family names containing whitespace [link to syntax module] should be quoted.
   rule(:font_family) {
@@ -75,9 +75,9 @@ class ParsletCSS::Parser < Parslet::Parser
   rule(:digit_hex) { match('[0-9a-fA-F]') }
   rule(:rgb) {
     (str('rgb(') | str('rgba(') | str('hsl(')) >>
-    space? >> rgb_value >> space? >> str(',') >>
-    space? >> rgb_value >> space? >> str(',') >>
-    (space? >> rgb_value >> space? >> str(',')).maybe >>
+    space? >> rgb_value >> space? >> comma >>
+    space? >> rgb_value >> space? >> comma >>
+    (space? >> rgb_value >> space? >> comma).maybe >>
     space? >> rgb_value >> space? >> str(')')
   }
   rule(:rgb_value) { percent | float | integer }
@@ -95,13 +95,30 @@ class ParsletCSS::Parser < Parslet::Parser
   rule(:float) { integer >> str('.') >> integer }
   rule(:semicolon) { str(';') }
   rule(:semicolon?) { semicolon.maybe }
+  rule(:comma) { str(',') }
   rule(:sign) { str('+') | str('-') }
   rule(:sign?) { sign.maybe }
   rule(:comment) { space? >> (str('/*') >> (str('*/').absent? >> any).repeat >> str('*/')) >> space? }
   rule(:ignore) { comment | space? }
 
-  # TODO: import charset media
+  # @import
+  # http://www.w3.org/TR/CSS2/cascade.html#at-import
+  # http://www.w3.org/TR/CSS2/syndata.html#at-rules
+  rule(:import) {
+    str('@import') >> space >> (quote >> name >> str('.css') >> quote | uri) >>
+    media_type_list.maybe >> semicolon >> ignore
+  }
+  rule(:media_type_list) {
+    space >> media_types >> ((comma >> space? >> media_types).repeat).maybe
+  }
+  rule(:media_types) {
+    str('all') | str('braille') | str('embossed') | str('handheld') |
+    str('print') | str('projection') | str('screen') | str('speech') |
+    str('tty') | str('tv')
+  }
   rule(:ruleset) { selectors >> lcurly >> declarations >> rcurly }
-  rule(:stylesheet) { ruleset.repeat }
+  # TODO: charset media
+  # http://www.w3.org/TR/CSS2/media.html#media-intro
+  rule(:stylesheet) { import.repeat.maybe >> ruleset.repeat }
   root :stylesheet
 end

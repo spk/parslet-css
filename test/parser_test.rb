@@ -6,6 +6,15 @@ describe ParsletCSS::Parser do
     @parser = ParsletCSS::Parser.new
   end
 
+  describe "import parse" do
+    it "can import other css" do
+      @parser.parse('@import "mystyle.css";')
+      @parser.parse('@import url("mystyle.css");')
+      @parser.parse('@import url("bluish.css") projection, tv;')
+      @parser.parse('@import url("fineprint.css") print; @import url("bluish.css") projection, tv; body {}')
+    end
+  end
+
   describe "parse success" do
     it "parse with percent" do
       @parser.parse("body { height: 100%; width: 100%; }")
@@ -68,6 +77,10 @@ describe ParsletCSS::Parser do
       {:msg => "at-rule with unexpected at-keyword @bar", :css => "@foo @bar;"},
       {:msg => "ruleset with unexpected right brace", :css => "}} {{ - }}"},
       {:msg => "ruleset with unexpected right parenthesis", :css => ") ( {} ) p {color: red }"},
+
+      # http://www.w3.org/TR/CSS2/syndata.html#at-rules
+      {:msg => "must ignore any '@import' rule that occurs inside a block",
+        :css => '@import "subs.css"; h1 { color: blue } @import "list.css";'}
     ]
     @raises.each do |r|
       class_eval do
