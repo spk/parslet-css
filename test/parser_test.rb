@@ -22,6 +22,13 @@ describe ParsletCSS::Parser do
     end
   end
 
+  describe '@media rule' do
+    it 'valid statement' do
+      @parser.parse('@media print { body { font-size: 10pt } }')
+      @parser.parse('@media screen, print { body { font-size: 13px } }')
+    end
+  end
+
   describe "parse success" do
     it "parse with percent" do
       @parser.parse("body { height: 100%; width: 100%; }")
@@ -76,13 +83,17 @@ describe ParsletCSS::Parser do
     @raises = [
       {:msg => "with extra semicolon", :css => "body { height: 100%; ; width: 100%; }"},
       {:msg => "with extra curly", :css => "body { height: 100%; width: 100%; }}"},
+      # TODO fix this
       {:msg => "& is not valid token", :css => "h3, h4 & h5 {color: red }"},
       {:msg => "1 malformed declaration missing ':', value", :css => "p { color:green; color }"},
+      # TODO fix this
       {:msg => "2 malformed declaration missing value", :css => "p { color:green; color: }"},
       {:msg => "unexpected tokens { }", :css => "p { color:green; color{;color:maroon} }"},
+      # TODO fix this
       {:msg => "ruleset with unexpected at-keyword @here", :css => "p @here {color: red}"},
       {:msg => "at-rule with unexpected at-keyword @bar", :css => "@foo @bar;"},
       {:msg => "ruleset with unexpected right brace", :css => "}} {{ - }}"},
+      # TODO fix this
       {:msg => "ruleset with unexpected right parenthesis", :css => ") ( {} ) p {color: red }"},
 
       # http://www.w3.org/TR/CSS2/syndata.html#at-rules

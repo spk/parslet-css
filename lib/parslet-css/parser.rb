@@ -117,10 +117,16 @@ class ParsletCSS::Parser < Parslet::Parser
 
   # @import
   # http://www.w3.org/TR/CSS2/cascade.html#at-import
-  # http://www.w3.org/TR/CSS2/syndata.html#at-rules
   rule(:import) {
     str('@import') >> space >> (quote >> name >> str('.css') >> quote | uri) >>
     media_type_list.maybe >> semicolon >> ignore
+  }
+
+  # @media
+  # http://www.w3.org/TR/CSS2/media.html#media-intro
+  rule(:media) {
+    str('@media') >> media_type_list >> space? >>
+    lcurly >> ruleset.repeat >> rcurly
   }
   rule(:media_type_list) {
     space >> media_types >> ((comma >> space? >> media_types).repeat).maybe
@@ -130,9 +136,8 @@ class ParsletCSS::Parser < Parslet::Parser
     str('print') | str('projection') | str('screen') | str('speech') |
     str('tty') | str('tv')
   }
+
   rule(:ruleset) { selectors >> lcurly >> declarations >> rcurly }
-  # TODO: media
-  # http://www.w3.org/TR/CSS2/media.html#media-intro
-  rule(:stylesheet) { charset.maybe >> import.repeat.maybe >> ruleset.repeat }
+  rule(:stylesheet) { charset.maybe >> import.repeat.maybe >> (media | ruleset.repeat) }
   root :stylesheet
 end
