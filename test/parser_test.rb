@@ -26,6 +26,8 @@ describe ParsletCSS::Parser do
     it 'valid statement' do
       @parser.parse('@media print { body { font-size: 10pt } }')
       @parser.parse('@media screen, print { body { font-size: 13px } }')
+      @parser.parse('/* print */ @media print { body { font-size: 10pt } }
+                     /* screen */ @media screen { body { font-size: 13px } }')
     end
   end
 

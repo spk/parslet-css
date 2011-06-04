@@ -125,7 +125,7 @@ class ParsletCSS::Parser < Parslet::Parser
   # @media
   # http://www.w3.org/TR/CSS2/media.html#media-intro
   rule(:media) {
-    str('@media') >> media_type_list >> space? >>
+    ignore >> str('@media') >> media_type_list >> space? >>
     lcurly >> ruleset.repeat >> rcurly
   }
   rule(:media_type_list) {
@@ -138,6 +138,6 @@ class ParsletCSS::Parser < Parslet::Parser
   }
 
   rule(:ruleset) { selectors >> lcurly >> declarations >> rcurly }
-  rule(:stylesheet) { charset.maybe >> import.repeat.maybe >> (media | ruleset.repeat) }
+  rule(:stylesheet) { charset.maybe >> import.repeat.maybe >> (media | ruleset).repeat }
   root :stylesheet
 end
