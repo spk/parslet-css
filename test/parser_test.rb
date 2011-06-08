@@ -78,6 +78,60 @@ describe ParsletCSS::Parser do
     it 'property priority' do
       @parser.parse(".date_selector .nav { width: 17.5em !important; }")
     end
+
+    describe('CSS selectors') do
+      # http://www.w3.org/TR/CSS2/selector.html
+      it "CSS2 w3c examples" do
+        # 5.2.1 Grouping
+        @parser.parse("h1, h2, h3 { font-family: sans-serif }")
+        # 5.6 Child selectors
+        @parser.parse("body > P { line-height: 1.3 }")
+        @parser.parse("div ol>li p { font: 2px }")
+        # 5.7 Adjacent sibling selectors
+        @parser.parse("math + p { text-indent: 0 } ")
+        @parser.parse("h1 + h2 { margin-top: -5mm }")
+        @parser.parse("h1.opener + h2 { margin-top: -5mm }")
+        # 5.8.1 Matching attributes and attribute values
+        @parser.parse("h1[title] { color: blue; }")
+        @parser.parse("span[class=example] { color: blue; }")
+        @parser.parse('span[hello="Cleveland"][goodbye="Columbus"] { color: blue; }')
+        @parser.parse('a[rel~="copyright"] {}')
+        @parser.parse('a[href="http://www.w3.org/"] {}')
+        @parser.parse("*[lang=fr] { display : none }")
+        @parser.parse('*[lang|="en"] { color : red }')
+        @parser.parse('DIALOGUE[character=juliet] { voice-family: "Vivien Leigh", victoria, female }')
+        # 5.8.3 Class selectors
+        @parser.parse("*.pastoral { color: green }")
+        @parser.parse("H1.pastoral { color: green }")
+        @parser.parse('p.marine.pastoral { color: green }')
+        # 5.9 ID selectors
+        @parser.parse("h1#chapter1 { text-align: center }")
+        # 5.11 Pseudo-classes
+        @parser.parse('div > p:first-child { text-indent: 0 }')
+        @parser.parse('p:first-child em { font-weight : bold }')
+        @parser.parse('* > a:first-child {} /* A is first child of any element */')
+        @parser.parse('a:first-child {} /* Same */')
+        @parser.parse(':link { color: red }')
+        @parser.parse('a.external:visited { color: blue }')
+        @parser.parse('a:focus:hover { background: white }')
+        # 5.11.4 The language pseudo-class: :lang
+        @parser.parse("html:lang(fr-ca) { quotes: '« ' ' »' }")
+        @parser.parse(":lang(fr) > Q { quotes: '« ' ' »' }")
+        # 5.12.1 The :first-line pseudo-element
+        @parser.parse("p:first-line { text-transform: uppercase }")
+        @parser.parse('p:first-letter { font-size: 3em; font-weight: normal }')
+        # 5.12.3 The :before and :after pseudo-elements
+        @parser.parse('p.special:before {content: "Special! "}')
+        @parser.parse('p.special:first-letter {color: #ffd800}')
+      end
+
+      it "CSS3 w3c examples" do
+        @parser.parse('object[type^="image/"] {}')
+        @parser.parse('a[href$=".html"] {}')
+        @parser.parse('tr:nth-child(2n+1) {} /* represents every odd row of an HTML table */')
+        @parser.parse('p:nth-child(4n+1) { color: navy; }')
+      end
+    end
   end
 
   describe "parse fail" do
@@ -85,13 +139,11 @@ describe ParsletCSS::Parser do
     @raises = [
       {:msg => "with extra semicolon", :css => "body { height: 100%; ; width: 100%; }"},
       {:msg => "with extra curly", :css => "body { height: 100%; width: 100%; }}"},
-      # TODO fix this
       {:msg => "& is not valid token", :css => "h3, h4 & h5 {color: red }"},
       {:msg => "1 malformed declaration missing ':', value", :css => "p { color:green; color }"},
       # TODO fix this
       {:msg => "2 malformed declaration missing value", :css => "p { color:green; color: }"},
       {:msg => "unexpected tokens { }", :css => "p { color:green; color{;color:maroon} }"},
-      # TODO fix this
       {:msg => "ruleset with unexpected at-keyword @here", :css => "p @here {color: red}"},
       {:msg => "at-rule with unexpected at-keyword @bar", :css => "@foo @bar;"},
       {:msg => "ruleset with unexpected right brace", :css => "}} {{ - }}"},

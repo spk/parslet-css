@@ -1,6 +1,12 @@
 class ParsletCSS::Parser < Parslet::Parser
-  # TODO: be more precise with selectors
-  rule(:selectors) { ignore >> match('[^{]').repeat }
+  rule(:selectors) {
+    ignore >> selector_chars >>
+    ((space? >> comma >> space? | space) >> selector_chars).repeat
+  }
+  rule(:selector_chars) {
+    match('[a-zA-Z0-9\-\._~\/*"$^:=()#>+|\[\]]').repeat
+  }
+
   rule(:lcurly) { ignore >> str('{') >> ignore }
   rule(:declarations) { (declaration >> semicolon?).repeat }
   rule(:declaration) {
@@ -13,7 +19,8 @@ class ParsletCSS::Parser < Parslet::Parser
   }
   # TODO: be more precise for margin, padding... property values
   rule(:property_value) {
-    font_height | property_value_keywords | uri | percent | color | size | font_family_list
+    font_height | property_value_keywords | uri | percent | color | size |
+    float | font_family_list
   }
   rule(:property_value_keywords) {
     str('no-repeat') | str('scroll') | str('inherit') |
@@ -55,7 +62,7 @@ class ParsletCSS::Parser < Parslet::Parser
   }
   # Font family names containing whitespace [link to syntax module] should be quoted.
   rule(:font_family) {
-    quote >> match('[a-zA-Z0-9\-_\. ]').repeat >> quote | name
+    quoted | name
   }
   rule(:font_height) {
     size >> str('/') >> size
@@ -91,6 +98,7 @@ class ParsletCSS::Parser < Parslet::Parser
   rule(:quote) { str('"') | str("'") }
   rule(:quote?) { quote.maybe }
   rule(:name) { match['_a-zA-Z0-9-'].repeat }
+  rule(:quoted) { quote >> (quote.absent? >> any).repeat >> quote }
   rule(:integer) { match('[0-9]').repeat }
   rule(:float) { integer >> str('.') >> integer }
   rule(:semicolon) { str(';') }
@@ -138,6 +146,7 @@ class ParsletCSS::Parser < Parslet::Parser
   }
 
   rule(:ruleset) { selectors >> lcurly >> declarations >> rcurly }
+  # TODO @namespace at-rule
   rule(:stylesheet) { charset.maybe >> import.repeat.maybe >> (media | ruleset).repeat }
   root :stylesheet
 end
