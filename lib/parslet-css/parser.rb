@@ -1,3 +1,4 @@
+# encoding: UTF-8
 class ParsletCSS::Parser < Parslet::Parser
   rule(:selectors) {
     ignore >> selector_chars >>
