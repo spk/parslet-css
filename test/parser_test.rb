@@ -126,6 +126,7 @@ describe ParsletCSS::Parser do
         @parser.parse('p.special:first-letter {color: #ffd800}')
       end
 
+      # http://www.w3.org/TR/css3-selectors/
       it "CSS3 w3c examples" do
         @parser.parse('object[type^="image/"] {}')
         @parser.parse('a[href$=".html"] {}')
@@ -142,7 +143,6 @@ describe ParsletCSS::Parser do
       {:msg => "with extra curly", :css => "body { height: 100%; width: 100%; }}"},
       {:msg => "& is not valid token", :css => "h3, h4 & h5 {color: red }"},
       {:msg => "1 malformed declaration missing ':', value", :css => "p { color:green; color }"},
-      # TODO fix this
       {:msg => "2 malformed declaration missing value", :css => "p { color:green; color: }"},
       {:msg => "unexpected tokens { }", :css => "p { color:green; color{;color:maroon} }"},
       {:msg => "ruleset with unexpected at-keyword @here", :css => "p @here {color: red}"},

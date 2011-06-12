@@ -9,10 +9,9 @@ class ParsletCSS::Parser < Parslet::Parser
   }
 
   rule(:lcurly) { ignore >> str('{') >> ignore }
-  rule(:declarations) { (declaration >> semicolon?).repeat }
+  rule(:declarations) { (ignore >> declaration >> semicolon? >> ignore).repeat }
   rule(:declaration) {
-    ignore >> name >> ignore >> str(':') >>
-    ignore >> property_values >> ignore
+    name >> ignore >> str(':') >> ignore >> property_values
   }
 
   rule(:property_values) {
@@ -98,7 +97,7 @@ class ParsletCSS::Parser < Parslet::Parser
   rule(:space?) { space.maybe }
   rule(:quote) { str('"') | str("'") }
   rule(:quote?) { quote.maybe }
-  rule(:name) { match['_a-zA-Z0-9-'].repeat }
+  rule(:name) { match['_a-zA-Z0-9-'].repeat(1) }
   rule(:quoted) { quote >> (quote.absent? >> any).repeat >> quote }
   rule(:integer) { match('[0-9]').repeat }
   rule(:float) { integer >> str('.') >> integer }
