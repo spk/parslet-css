@@ -132,6 +132,8 @@ describe ParsletCSS::Parser do
         @parser.parse('a[href$=".html"] {}')
         @parser.parse('tr:nth-child(2n+1) {} /* represents every odd row of an HTML table */')
         @parser.parse('p:nth-child(4n+1) { color: navy; }')
+        @parser.parse('button:not([DISABLED]) {}')
+        @parser.parse('p::first-line { text-transform: uppercase }')
       end
     end
   end
@@ -148,7 +150,6 @@ describe ParsletCSS::Parser do
       {:msg => "ruleset with unexpected at-keyword @here", :css => "p @here {color: red}"},
       {:msg => "at-rule with unexpected at-keyword @bar", :css => "@foo @bar;"},
       {:msg => "ruleset with unexpected right brace", :css => "}} {{ - }}"},
-      # TODO fix this
       {:msg => "ruleset with unexpected right parenthesis", :css => ") ( {} ) p {color: red }"},
 
       # http://www.w3.org/TR/CSS2/syndata.html#at-rules
@@ -157,6 +158,9 @@ describe ParsletCSS::Parser do
       {:msg => 'non valid charset', :css => '@charset "none";'},
       {:msg => '@charset rule not at the beginning of the style sheet',
         :css => '@import "awesome.css"; @charset "UTF-8";'},
+
+      {:msg => 'identifier must not be empty. (Otherwise, the selector is invalid.)',
+        :css => 'html:lang() {}'},
     ]
     @raises.each do |r|
       class_eval do

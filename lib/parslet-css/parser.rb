@@ -5,7 +5,8 @@ class ParsletCSS::Parser < Parslet::Parser
     ((space? >> comma >> space? | space) >> selector_chars).repeat
   }
   rule(:selector_chars) {
-    match('[a-zA-Z0-9\-\._~\/*"$^:=()#>+|\[\]]').repeat
+    match('[a-zA-Z0-9\-\._~\/*"$^:=#>+|\[\]]').repeat(1) >>
+    (str('(') >> match['a-zA-Z0-9\-+:*\[\]'].repeat(1) >> str(')')).maybe
   }
 
   rule(:lcurly) { ignore >> str('{') >> ignore }
