@@ -1,6 +1,8 @@
+require './lib/parslet-css'
+
 Gem::Specification.new do |s|
   s.name = "parslet-css"
-  s.version = "0.0.1"
+  s.version = ParsletCSS::VERSION
   s.date = Time.now.utc.strftime("%Y-%m-%d")
   s.homepage = "http://github.com/spk/parslet-css"
   s.authors = "Laurent Arnoud"

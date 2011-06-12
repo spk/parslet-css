@@ -2,6 +2,8 @@
 require 'parslet'
 
 class ParsletCSS
+  VERSION = "0.0.1"
+
   autoload :Parser, 'parslet-css/parser'
 
   def self.compile(str)
