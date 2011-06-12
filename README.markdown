@@ -7,8 +7,9 @@ Work in progress
 ## Usage
 
 ```ruby
+require 'parslet-css'
 parser = ParsletCSS::Parser.new
-parser.parse("body { background: url(/images/plop.png); }")
+parser.parse("body { background: url(/images/plop.png); }") # => [{:url=>"/images/plop.png"@23}]
 ```
 
 ## License

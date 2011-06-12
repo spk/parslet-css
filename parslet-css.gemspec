@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.description = "CSS parser with Parslet"
   s.summary = "CSS parser with Parslet grammar tool"
   s.extra_rdoc_files = %w(README.markdown)
-  s.files = Dir["LICENSE", "README.markdown", "Gemfile", "data", "lib/**/*.rb"]
+  s.files = Dir["LICENSE", "README.markdown", "Gemfile", "data/*", "lib/**/*.rb"]
   s.test_files = Dir.glob("test/*_test.rb")
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.7}
