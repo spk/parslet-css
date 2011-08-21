@@ -16,7 +16,8 @@ class ParsletCSS::Parser < Parslet::Parser
   }
 
   rule(:property_values) {
-    property_value >> (semicolon.absent? >> space >> property_value).repeat(0, 5)
+    property_value >>
+    (semicolon.absent? >> space >> property_value).repeat(0, 5)
   }
   # TODO: be more precise for margin, padding... property values
   rule(:property_value) {
@@ -39,7 +40,9 @@ class ParsletCSS::Parser < Parslet::Parser
      str('prospero')) >> str('://')
   }
   rule(:protocol?) { protocol.maybe }
-  rule(:domain) { match('[a-zA-Z0-9\-\._\/]').repeat >> (str(':') >> integer).maybe }
+  rule(:domain) {
+    match('[a-zA-Z0-9\-\._\/]').repeat >> (str(':') >> integer).maybe
+  }
   rule(:domain?) { domain.maybe }
   rule(:path) { path_chars >> query? }
   rule(:path_chars) { (str('/').maybe >> match('[a-zA-Z0-9\-\._~]')).repeat }
@@ -61,7 +64,7 @@ class ParsletCSS::Parser < Parslet::Parser
   rule(:font_family_list) {
     font_family >> ((comma >> space? >> font_family).repeat).maybe
   }
-  # Font family names containing whitespace [link to syntax module] should be quoted.
+  # Font family names containing whitespace should be quoted.
   rule(:font_family) {
     quoted | name
   }
@@ -107,13 +110,18 @@ class ParsletCSS::Parser < Parslet::Parser
   rule(:comma) { str(',') }
   rule(:sign) { str('+') | str('-') }
   rule(:sign?) { sign.maybe }
-  rule(:comment) { space? >> (str('/*') >> (str('*/').absent? >> any).repeat >> str('*/')) >> space? }
+  rule(:comment) {
+    space? >>
+    (str('/*') >> (str('*/').absent? >> any).repeat >> str('*/')) >>
+    space?
+  }
   rule(:ignore) { comment | space? }
 
   # @charset
   # http://www.w3.org/TR/CSS21/syndata.html#charset
   # http://www.iana.org/assignments/character-sets
-  @@charsets_file = File.join(File.dirname(__FILE__), '..', '..', 'data', 'iana_character_sets.txt')
+  @@charsets_file = File.join(File.dirname(__FILE__),
+                              '..', '..', 'data', 'iana_character_sets.txt')
   @@charsets = open(@@charsets_file).read.split
   def charsets
     Parslet::Atoms::Alternative.new(*@@charsets.map {|c| str(c)})
@@ -127,7 +135,8 @@ class ParsletCSS::Parser < Parslet::Parser
   # @import
   # http://www.w3.org/TR/CSS2/cascade.html#at-import
   rule(:import) {
-    str('@import') >> space >> (quote >> (name >> str('.css')).as(:import) >> quote | uri.as(:import)) >>
+    str('@import') >> space >>
+    (quote >> (name >> str('.css')).as(:import) >> quote | uri.as(:import)) >>
     space? >> media_type_list.maybe.as(:media_type_list) >> semicolon >> ignore
   }
 
@@ -148,6 +157,9 @@ class ParsletCSS::Parser < Parslet::Parser
 
   rule(:ruleset) { selectors >> lcurly >> declarations >> rcurly }
   # TODO @namespace at-rule
-  rule(:stylesheet) { charset.maybe >> import.repeat.maybe >> (media | ruleset).repeat }
+  rule(:stylesheet) {
+    charset.maybe >> import.repeat.maybe >>
+    (media | ruleset).repeat
+  }
   root :stylesheet
 end
