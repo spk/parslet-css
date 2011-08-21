@@ -1,4 +1,4 @@
-require './lib/parslet-css'
+require File.join(File.dirname(__FILE__), 'lib', 'parslet-css', 'version')
 
 Gem::Specification.new do |s|
   s.name = "parslet-css"
