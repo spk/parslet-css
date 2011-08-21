@@ -134,7 +134,7 @@ class ParsletCSS::Parser < Parslet::Parser
   # @media
   # http://www.w3.org/TR/CSS2/media.html#media-intro
   rule(:media) {
-    ignore >> str('@media') >> space >> media_type_list >> space? >>
+    ignore >> str('@media') >> space >> media_type_list.as(:media) >> space? >>
     lcurly >> ruleset.repeat >> rcurly
   }
   rule(:media_type_list) {

@@ -25,6 +25,10 @@ describe ParsletCSS::Parser do
       assert_equal(res.last[:url], '/nav.png')
       assert_equal(res.size, 2)
     end
+    it 'can have media' do
+      res = @parser.parse('@media screen, print { body { font-size: 13px } }')
+      assert_equal(res.first[:media], 'screen, print')
+    end
   end
 
   describe "import parse" do
