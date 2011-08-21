@@ -12,7 +12,7 @@ class ParsletCSS::Parser < Parslet::Parser
   rule(:lcurly) { ignore >> str('{') >> ignore }
   rule(:declarations) { (ignore >> declaration >> semicolon? >> ignore).repeat }
   rule(:declaration) {
-    name >> ignore >> str(':') >> ignore >> property_values
+    margin | (name >> property_colon >> property_values)
   }
 
   rule(:property_values) {
@@ -20,14 +20,21 @@ class ParsletCSS::Parser < Parslet::Parser
     (semicolon.absent? >> space >> property_value).repeat(0, 5)
   }
   # TODO: be more precise for margin, padding... property values
+  rule(:margin) {
+    str('margin') >> property_colon >>
+    (percent | size | str('auto') | str('inherit')) >>
+    (semicolon.absent? >> space >>
+     (percent | size | str('auto') | str('inherit'))).repeat(1, 3)
+  }
   rule(:property_value) {
     font_height | property_value_keywords | uri | percent | color | size |
     float | font_family_list
   }
+  # TODO: split
   rule(:property_value_keywords) {
     str('no-repeat') | str('scroll') | str('inherit') |
     str('baseline') | str('block') | str('both') | str('bold') |
-    str('inline-block') | str('!important') | str('inline')
+    str('inline-block') | str('!important') | str('inline') | str('auto')
   }
 
   # URL
@@ -107,6 +114,8 @@ class ParsletCSS::Parser < Parslet::Parser
   rule(:float) { integer >> str('.') >> integer }
   rule(:semicolon) { str(';') }
   rule(:semicolon?) { semicolon.maybe }
+  rule(:colon) { str(':') }
+  rule(:property_colon) { ignore >> colon >> ignore }
   rule(:comma) { str(',') }
   rule(:sign) { str('+') | str('-') }
   rule(:sign?) { sign.maybe }

@@ -184,6 +184,8 @@ describe ParsletCSS::Parser do
 
       {:msg => 'identifier must not be empty. (Otherwise, the selector is invalid.)',
         :css => 'html:lang() {}'},
+      {:msg => 'margin non valid values',
+        :css => "body { margin: 10px 10px 10px transparent;}"}
     ]
     @raises.each do |r|
       class_eval do
