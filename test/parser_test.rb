@@ -7,6 +7,26 @@ describe ParsletCSS::Parser do
     @parser = ParsletCSS::Parser.new
   end
 
+  describe "Annotate" do
+    it 'can have import' do
+      res = @parser.parse('@import "mystyle.css" projection, tv; @import url("mystyle.css") print;')
+      assert_equal(res.first[:import], 'mystyle.css')
+      assert_equal(res.first[:media_type_list], 'projection, tv')
+      assert_equal(res.last[:import], {:url => "mystyle.css"})
+      assert_equal(res.last[:media_type_list], 'print')
+    end
+    it 'can have charset' do
+      res = @parser.parse('@charset "ISO-8859-1";')
+      assert_equal(res[:charset], 'ISO-8859-1')
+    end
+    it 'can have urls' do
+      res = @parser.parse("body { background: url(/up.png); } nav { background: url(/nav.png) }")
+      assert_equal(res.first[:url], '/up.png')
+      assert_equal(res.last[:url], '/nav.png')
+      assert_equal(res.size, 2)
+    end
+  end
+
   describe "import parse" do
     it "can import other css" do
       @parser.parse('@import "mystyle.css";')
@@ -41,8 +61,7 @@ describe ParsletCSS::Parser do
       @parser.parse("body { background: url(https://localhost:3000/images/plop.png); }")
       @parser.parse("body { background: url(/~spk/images/plop.png?size=30;toto=tata); }")
       @parser.parse("body { background: url(/~spk/images/plop.png?size=30&toto=tata); }")
-      u = @parser.parse("body { background: url(/up.png); } nav { background: url(/nav.png) }")
-      assert_equal(2, u.size)
+      @parser.parse("body { background: url(/up.png); } nav { background: url(/nav.png) }")
     end
     it "with comments" do
       @parser.parse("body { /* comment */ padding: 0; /* comment */}")

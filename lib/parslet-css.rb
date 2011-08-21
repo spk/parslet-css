@@ -10,6 +10,7 @@ class ParsletCSS
     parser.parse(str)
   rescue Parslet::ParseFailed => error
     puts parser.root.error_tree
+    parser
   end
 end
 

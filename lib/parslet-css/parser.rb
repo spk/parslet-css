@@ -120,25 +120,25 @@ class ParsletCSS::Parser < Parslet::Parser
   end
   rule(:charset) {
     str('@charset') >> space >> quote >>
-    charsets >>
+    charsets.as(:charset) >>
     quote >> semicolon >> ignore
   }
 
   # @import
   # http://www.w3.org/TR/CSS2/cascade.html#at-import
   rule(:import) {
-    str('@import') >> space >> (quote >> name >> str('.css') >> quote | uri) >>
-    media_type_list.maybe >> semicolon >> ignore
+    str('@import') >> space >> (quote >> (name >> str('.css')).as(:import) >> quote | uri.as(:import)) >>
+    space? >> media_type_list.maybe.as(:media_type_list) >> semicolon >> ignore
   }
 
   # @media
   # http://www.w3.org/TR/CSS2/media.html#media-intro
   rule(:media) {
-    ignore >> str('@media') >> media_type_list >> space? >>
+    ignore >> str('@media') >> space >> media_type_list >> space? >>
     lcurly >> ruleset.repeat >> rcurly
   }
   rule(:media_type_list) {
-    space >> media_types >> ((comma >> space? >> media_types).repeat).maybe
+    media_types >> ((comma >> space? >> media_types).repeat).maybe
   }
   rule(:media_types) {
     str('all') | str('braille') | str('embossed') | str('handheld') |
