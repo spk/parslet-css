@@ -22,9 +22,9 @@ class ParsletCSS::Parser < Parslet::Parser
   # TODO: be more precise for margin, padding... property values
   rule(:margin) {
     str('margin') >> property_colon >>
-    (percent | size | str('auto') | str('inherit')) >>
+    (str('auto') | str('inherit') | percent | size | integer) >>
     (semicolon.absent? >> space >>
-     (percent | size | str('auto') | str('inherit'))).repeat(1, 3)
+     (str('auto') | str('inherit') | percent | size | integer)).repeat(1, 3)
   }
   rule(:property_value) {
     font_height | property_value_keywords | uri | percent | color | size |
