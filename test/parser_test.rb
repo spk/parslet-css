@@ -57,6 +57,11 @@ describe ParsletCSS::Parser do
   end
 
   describe "parse success" do
+    it "parse margin" do
+      @parser.parse("body { margin: 0 auto; }")
+      @parser.parse("body { margin: 10px 10px 0 0;}")
+    end
+
     it "parse with percent" do
       @parser.parse("body { height: 100%; width: 100%; }")
     end
